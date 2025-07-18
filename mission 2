@@ -1,0 +1,82 @@
+מטלה2 // — DFS
+
+//שאלה 1: סיווג קשתות
+
+‏import java.util.*;
+
+‏public class EdgeClassification {
+‏    static int time;
+‏    static int[] d, f;
+‏    static String[] color;
+‏    static List<String> types;
+
+‏    static void dfs(List<Integer>[] graph) {
+‏        int n = graph.length;
+‏        time = 0;
+‏        d = new int[n];
+‏        f = new int[n];
+‏        color = new String[n];
+‏        types = new ArrayList<>();
+‏        Arrays.fill(color, "white");
+
+‏        for (int u = 0; u < n; u++) {
+‏            if (color[u].equals("white")) dfsVisit(graph, u);
+        }
+    }
+
+‏    static void dfsVisit(List<Integer>[] graph, int u) {
+‏        color[u] = "gray";
+‏        d[u] = ++time;
+‏        for (int v : graph[u]) {
+‏            if (color[v].equals("white")) {
+‏                types.add(u + "->" + v + ": tree");
+‏                dfsVisit(graph, v);
+‏            } else if (color[v].equals("gray")) {
+‏                types.add(u + "->" + v + ": back");
+‏            } else if (d[u] < d[v]) {
+‏                types.add(u + "->" + v + ": forward");
+‏            } else {
+‏                types.add(u + "->" + v + ": cross");
+            }
+        }
+‏        color[u] = "black";
+‏        f[u] = ++time;
+    }
+}
+
+
+
+
+
+//שאלה 2: גרף קשיר למחצה
+
+‏import java.util.*;
+
+‏public class SemiConnected {
+‏    static boolean isSemiConnected(List<Integer>[] graph) {
+‏        int n = graph.length;
+‏        List<Integer> order = topologicalSort(graph);
+‏        for (int i = 0; i < order.size() - 1; i++) {
+‏            if (!graph[order.get(i)].contains(order.get(i + 1))) return false;
+        }
+‏        return true;
+    }
+
+‏    static List<Integer> topologicalSort(List<Integer>[] graph) {
+‏        int n = graph.length;
+‏        boolean[] visited = new boolean[n];
+‏        List<Integer> order = new ArrayList<>();
+
+‏        for (int u = 0; u < n; u++) {
+‏            if (!visited[u]) dfs(graph, u, visited, order);
+        }
+‏        Collections.reverse(order);
+‏        return order;
+    }
+
+‏    static void dfs(List<Integer>[] graph, int u, boolean[] visited, List<Integer> order) {
+‏        visited[u] = true;
+‏        for (int v : graph[u]) if (!visited[v]) dfs(graph, v, visited, order);
+‏        order.add(u);
+    }
+}
